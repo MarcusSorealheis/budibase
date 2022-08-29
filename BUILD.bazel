@@ -1,2 +1,67 @@
 # Add rules here to build your software
 # See https://docs.bazel.build/versions/master/build-ref.html#BUILD_files
+
+# version two
+
+package(default_visibility = ["//visibility:public"])
+
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@aspect_rules_js//js:defs.bzl", "js_binary", "js_run_binary", "js_test")
+load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+
+write_source_files(
+    name = "update_repos",
+    files = {
+        "repositories.bzl": "@npm_deps//:repositories.bzl",
+    },
+)
+
+npm_link_all_packages(name = "npm")
+
+bzl_library(
+    name = "npm_import",
+    srcs = ["npm_import.bzl"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//npm/private:npm_import",
+        "//npm/private:npm_translate_lock",
+        "//npm/private:utils",
+        "//npm/private:versions",
+    ],
+)
+# # one-2 bad
+# load("@acorn__8.4.0__links//:defs.bzl", npm_link_acorn = "npm_link_imported_package")
+# load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
+# load("@npm//:defs.bzl", "npm_link_all_packages")
+# load("@pnpm__links//:defs.bzl", npm_link_pnpm = "npm_link_imported_package")
+# load("//npm:defs.bzl", "npm_link_package")
+
+# # Link all packages from the /WORKSPACE npm_translate_lock(name = "npm") and also packages from
+# # manual /WORKSPACE npm_import rules to bazel-bin/node_modules as well as the virtual store
+# # bazel-bin/node_modules/.aspect_rules_js since /pnpm-lock.yaml is the root of the pnpm workspace
+# npm_link_all_packages(
+#     name = "node_modules",
+#     imported_links = [
+#         npm_link_acorn,
+#         npm_link_pnpm,
+#     ],
+# )
+
+# # Example of manually linking a first-party dependency. Its transitive npm dependencies
+# # are picked up automatically via 'npm_package_store_deps' in the js_library targets that
+# # the `npm_package` target depends on.
+# npm_link_package(
+#     name = "node_modules/@mycorp/pkg-b",
+#     src = "//examples/npm_package/packages/pkg_b",
+# )
+
+# gazelle_binary(
+#     name = "gazelle_bin",
+#     languages = ["@bazel_skylib//gazelle/bzl"],
+# )
+
+# gazelle(
+#     name = "gazelle",
+#     gazelle = "gazelle_bin",
+# )
