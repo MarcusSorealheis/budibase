@@ -106,3 +106,4 @@ stats.html
 
 # Bazel
 bazel-*
+.bazelrc
