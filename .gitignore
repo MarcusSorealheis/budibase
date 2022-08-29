@@ -103,3 +103,6 @@ stats.html
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Bazel
+bazel-*
